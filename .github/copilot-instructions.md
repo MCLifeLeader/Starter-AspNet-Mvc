@@ -30,35 +30,53 @@ These instructions define how GitHub Copilot should assist with this project. Th
 Use this structure as a guide when creating or updating files:
 
 ```text
+containers/
+    __files/
+    extensions/
+    mappings/
+    mssql/
+    service-bus/
+devops/
 src/
-    Ai.Coach/
-        Ai.Coach.App/
-            Ai.Coach.App.ApiService/
-            Ai.Coach.App.AppHost/
-            Ai.Coach.App.Home/
-            Ai.Coach.App.ServiceDefaults/
-            Ai.Coach.App.Tests/
-            Ai.Coach.App.WebAsm/
-        Ai.Coach.Business/
+    Starter.AspNet.MVC/
+        Areas/
+            Identity/
+        Connection/
             DependencyInjection/
-            Services/
-        Ai.Coach.Common/
-            Connection/
-            Constants/
-            Helpers/
-                Data/
-                Exceptions/
-                Extensions/
-                Filter/
-            Models/
-            Repositories/
-        Ai.Coach.Data/
-            Helpers/
-            Models/
-            Repositories/
-        Ai.Coach.Database/
-        Ai.Coach.Home/
-        Ai.Coach.Locale/
+        Constants/
+        Controllers/
+        Data/
+            DependencyInjection/
+            Migrations/
+        Factories/
+            DependencyInjection/
+        Helpers/
+            DependencyInjection/
+            Extensions/
+            Health/
+            Validators/
+        Models/
+            ApplicationSettings/
+        Properties/
+        Repository/
+        Services/
+        Views/
+        wwwroot/
+    Startup.Business/
+        DependencyInjection/
+        Services/
+    Startup.Common/
+        Connection/
+        Constants/
+        Helpers/
+        Models/
+        Repositories/
+        Services/
+    Startup.Data/
+        Models/
+        Repositories/
+    Startup.Example.Db/
+        dbo/
 ```
 
 ## HTML, CSS, and JavaScript Guidelines
