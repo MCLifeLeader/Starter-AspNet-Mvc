@@ -8,7 +8,7 @@ using Startup.Data.Models.Db.dboSchema;
 
 namespace Startup.Data.Repositories.Db;
 
-public partial class StartupExampleContainer
+public partial class StartupExampleContainer : DbContext
 {
     public StartupExampleContainer(DbContextOptions<StartupExampleContainer> options)
         : base(options)
