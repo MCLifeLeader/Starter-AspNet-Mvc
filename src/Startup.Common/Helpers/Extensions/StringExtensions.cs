@@ -21,6 +21,6 @@ public static class StringExtensions
         {
             return "****";
         }
-        return $"{s.Substring(0, 4)}********";
+        return $"{s[..4]}********";
     }
 }
