@@ -49,7 +49,7 @@ public class UserToAgencyRepository : StartupExampleRepositoryBase, IUserToAgenc
 
     public UserToAgency GetEntityById(string key1, Guid key2)
     {
-        return _context.UserToAgencies.SingleOrDefault(e => e.UserId.Equals(key2) && e.AgencyId == key2);
+        return _context.UserToAgencies.SingleOrDefault(e => e.UserId.Equals(key1) && e.AgencyId == key2);
     }
 
     public IList<UserToAgency> GetEntityByFirstKeyId(string key1)
