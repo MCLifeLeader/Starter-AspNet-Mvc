@@ -64,7 +64,7 @@ public class UserToAgencyRepository : StartupExampleRepositoryBase, IUserToAgenc
 
     public async Task<UserToAgency> GetEntityByIdAsync(string key1, Guid key2)
     {
-        return await _context.UserToAgencies.SingleOrDefaultAsync(e => e.UserId.Equals(key2) && e.AgencyId == key2);
+        return await _context.UserToAgencies.SingleOrDefaultAsync(e => e.UserId.Equals(key1) && e.AgencyId == key2);
     }
 
     public IList<UserToAgency> GetEntitiesByFirstKeyId(string key1)
