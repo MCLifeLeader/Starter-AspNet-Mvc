@@ -24,7 +24,7 @@ public abstract class RepositoryBase<TDbContext> : IDisposable
             throw new ArgumentNullException(nameof(dbContext));
         }
 
-        _context = (TDbContext) dbContext;
+        _context = dbContext as TDbContext;
 
         if (_context == null)
         {
