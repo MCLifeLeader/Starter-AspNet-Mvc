@@ -1,0 +1,132 @@
+# Combined Build and Deploy Pipeline for AExample MVC Apps
+# This pipeline builds and deploys Example MVC App with version tagging
+
+name: Example MVC App - Build and Deploy Pipeline
+
+####################### Build Trigger ##################################
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+####################### Jobs and Steps ##################################
+jobs:
+    ####################### Build ##################################
+    build:
+        runs-on: [self-hosted, Windows]
+        #runs-on: windows-latest
+        permissions:
+            contents: read
+        outputs:
+            build_version: ${{ steps.set_build_version.outputs.build_version }}
+        steps:
+
+            ####################### Build Prep ##################################
+
+            - name: Clean publish_output directory
+              shell: pwsh
+              run: |
+                  if (Test-Path ../publish_output) {
+                      Remove-Item ../publish_output -Recurse -Force
+                  }
+
+            - uses: actions/checkout@v4
+
+            - name: Set date variables and BuildVersion
+              id: set_build_version
+              shell: pwsh
+              run: |
+                  $year = (Get-Date).Year
+                  $month = (Get-Date).Month.ToString("D2")
+                  $day = (Get-Date).Day.ToString("D2")
+
+                  echo "YEAR=$year" >> $env:GITHUB_ENV
+                  echo "MONTH=$month" >> $env:GITHUB_ENV
+                  echo "DAY=$day" >> $env:GITHUB_ENV
+
+                  # Wrap github.run_number to 1-65535
+                  $runNumber = ${{ github.run_number }}
+                  $wrappedRunNumber = (($runNumber - 1) % 65535) + 1
+
+                  $buildVersion = "${{ vars.ReleaseVersion }}.$year.$month$day.$wrappedRunNumber"
+                  echo "BUILD_VERSION=$buildVersion" >> $env:GITHUB_ENV
+                  echo "build_version=$buildVersion" >> $env:GITHUB_OUTPUT
+
+            - name: Set up .NET Core
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: "9.x"
+
+            ####################### Build HomeSite ##################################
+
+            - name: Build Ai.Coach.App.Home
+              run: dotnet build ./src/Ai.Coach/Ai.Coach.App/Ai.Coach.App.Home/Ai.Coach.App.Home.csproj --configuration Release /p:Version=${{ env.BUILD_VERSION }}
+
+            - name: Publish Ai.Coach.App.Home
+              run: dotnet publish ./src/Ai.Coach/Ai.Coach.App/Ai.Coach.App.Home/Ai.Coach.App.Home.csproj -c Release -o ../publish_output/home --no-build /p:Version=${{ env.BUILD_VERSION }}
+
+            - name: Zip App.Home output
+              run: Compress-Archive -Path ../publish_output/home/* -DestinationPath ../publish_output/Ai.Coach.App.Home.zip
+
+            # - name: Upload App.Home artifact
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #       name: Ai.Coach.App.Home
+            #       path: ../publish_output
+            #       retention-days: 3
+
+    ####################### Tag Main Branch ##################################
+
+    tag-main:
+        runs-on: [self-hosted, Windows]
+        #runs-on: windows-latest
+        needs: build
+        if: github.ref == 'refs/heads/main' && needs.build.result == 'success'
+        permissions:
+            contents: write
+            id-token: write
+            issues: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Create Release using GitHub CLI
+              shell: pwsh
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                $version = "${{ needs.build.outputs.build_version }}"
+                $title = "Release $version"
+                $notes = "Automated release for $version"
+                gh release create $version --title "$title" --notes "$notes" --latest
+
+
+    ####################### Deployment HomeSite ##################################
+
+    deploy-home:
+        runs-on: [self-hosted, Windows]
+        #runs-on: windows-latest
+        needs: tag-main
+        permissions:
+            id-token: write
+            contents: read
+        steps:
+            # - name: Download App.Home artifact
+            #   uses: actions/download-artifact@v4
+            #   with:
+            #       name: Ai.Coach.App.Home
+            - name: Login to Azure
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_995F0191789346CE997B53E023B388C1 }}
+                  tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1AC65EAE653A45C8B4B099C9F41DC75B }}
+                  subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C7232968F99241F9879ACF509F5C889B }}
+            - name: Deploy to Azure Web App
+              id: deploy-to-webapp-home
+              uses: azure/webapps-deploy@v3
+              with:
+                  app-name: "aicoaches-home"
+                  slot-name: "Production"
+                  package: ../publish_output/Ai.Coach.App.Home.zip

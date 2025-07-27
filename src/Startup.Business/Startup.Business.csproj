@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Startup.Business</AssemblyName>
+        <RootNamespace>Startup.Business</RootNamespace>
+        <Configurations>Debug;Release;Development;Production;Staging;Docker</Configurations>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.AI.OpenAI" Version="2.1.0" />
+        <PackageReference Include="Azure.Identity" Version="1.14.2" />
+        <PackageReference Include="Microsoft.Extensions.Azure" Version="1.12.0" />
+        <PackageReference Include="Microsoft.FeatureManagement" Version="4.2.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="QRCoder" Version="1.6.0" />
+        <PackageReference Include="System.Formats.Asn1" Version="9.0.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Startup.Common\Startup.Common.csproj" />
+      <ProjectReference Include="..\Startup.Data\Startup.Data.csproj" />
+    </ItemGroup>
+
+</Project>

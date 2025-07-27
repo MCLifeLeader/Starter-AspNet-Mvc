@@ -1,0 +1,14 @@
+parameters:
+  - name: artifacts
+    type: object
+    default: []
+
+steps:
+- ${{ each artifact in parameters.artifacts }}:
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish ${{ artifact.displayName }} Artifact'
+    inputs:
+      PathToPublish: '$(Build.ArtifactStagingDirectory)/${{ artifact.folder }}'
+      ArtifactName: '${{ artifact.folder }}'
+      publishLocation: 'Container'
+      TargetPath: '$(Build.ArtifactStagingDirectory)/drop/${{ artifact.folder }}'
