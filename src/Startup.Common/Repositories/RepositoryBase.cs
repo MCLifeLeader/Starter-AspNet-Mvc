@@ -5,10 +5,10 @@ namespace Startup.Common.Repositories;
 /// <summary>
 ///     Base abstract class used as a foundation for all of the other repository classes
 /// </summary>
-public abstract class RepositoryBase<TDbContext> : IDisposable
+public abstract class RepositoryBase<TDbContext> : IDisposable where TDbContext : class
 {
     // ReSharper disable once InconsistentNaming
-    protected readonly TDbContext _context;
+    protected readonly TDbContext? _context;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="RepositoryBase{TDbContext}" /> class.
