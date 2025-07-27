@@ -1,0 +1,70 @@
+####################### SCHEDULE ##################################
+schedules:
+  - cron: "0 19 * * *"
+    displayName: Nightly build
+    branches:
+      include:
+        - main
+    always: true
+    batch: true
+
+####################### TRIGGER ##################################
+trigger:
+    - main
+
+####################### PIPELINE NAME ##################################
+name: $(ReleaseVersion).$(date:yyyy).$(date:MMdd)$(rev:.r)
+
+####################### VARIABLES ##################################
+variables:
+  - group: Ai-Coaches
+
+  - name: starterAspNetMvc
+    value: '**/Starter.AspNet.MVC.csproj'
+
+  - name: buildPlatform
+    value: 'Any CPU'
+  - name: buildConfiguration
+    value: 'Release'
+  - name: BuildVersion
+    value: '$(Build.BuildNumber)'
+
+####################### AGENT POOL ##################################
+pool: default
+
+####################### RESOURCES ##################################
+resources:
+  repositories:
+    - repository: Starter-AspNet-Mvc
+      type: github
+      endpoint: MCLifeLeader
+      name: MCLifeLeader/Starter-AspNet-Mvc
+
+####################### STAGES ##################################
+
+steps:
+
+# Build the starterAspNetMvc
+- task: DotNetCoreCLI@2
+  displayName: 'Build starterAspNetMvc'
+  inputs:
+    command: 'build'
+    projects: '$(starterAspNetMvc)'
+    arguments: '--configuration $(buildConfiguration) /p:Version=$(BuildVersion) /p:EnvironmentName=Production /p:BuildingInsideVisualStudio=false'
+
+# Publish the project to the artifact staging directory
+- task: DotNetCoreCLI@2
+  displayName: 'Publish starterAspNetMvc'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '$(starterAspNetMvc)'
+    arguments: '/p:Version=$(BuildVersion) --output $(Build.ArtifactStagingDirectory)/starterAspNetMvc /p:EnvironmentName=Production /p:BuildingInsideVisualStudio=false'
+    zipAfterPublish: true
+
+# Usage of the template
+- template: publish-artifact-template.yml
+  parameters:
+    artifacts:
+      - displayName: 'starterAspNetMvc'
+        folder: 'starterAspNetMvc'
