@@ -47,7 +47,7 @@ public class UserToAgencyRepository : StartupExampleRepositoryBase, IUserToAgenc
         _context.UserToAgencies.UpdateRange(entities);
     }
 
-    public UserToAgency GetEntityById(string key1, Guid key2)
+    public UserToAgency? GetEntityById(string key1, Guid key2)
     {
         return _context.UserToAgencies.SingleOrDefault(e => e.UserId.Equals(key1) && e.AgencyId == key2);
     }
@@ -62,7 +62,7 @@ public class UserToAgencyRepository : StartupExampleRepositoryBase, IUserToAgenc
         return _context.UserToAgencies.Where(e => e.AgencyId == key2).ToList();
     }
 
-    public async Task<UserToAgency> GetEntityByIdAsync(string key1, Guid key2)
+    public async Task<UserToAgency?> GetEntityByIdAsync(string key1, Guid key2)
     {
         return await _context.UserToAgencies.SingleOrDefaultAsync(e => e.UserId.Equals(key1) && e.AgencyId == key2);
     }
