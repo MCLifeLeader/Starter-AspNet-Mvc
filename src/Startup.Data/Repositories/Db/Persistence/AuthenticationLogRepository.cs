@@ -48,12 +48,12 @@ public class AuthenticationLogRepository : StartupExampleRepositoryBase, IAuthen
         throw new NotImplementedException();
     }
 
-    public AuthenticationLog GetEntityById(Guid key)
+    public AuthenticationLog? GetEntityById(Guid key)
     {
         return _context.AuthenticationLogs.SingleOrDefault(e => e.Id == key);
     }
 
-    public async Task<AuthenticationLog> GetEntityByIdAsync(Guid key)
+    public async Task<AuthenticationLog?> GetEntityByIdAsync(Guid key)
     {
         return await _context.AuthenticationLogs.SingleOrDefaultAsync(e => e.Id == key);
     }

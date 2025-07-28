@@ -1,4 +1,4 @@
-# Combined Build and Deploy Pipeline for AExample MVC Apps
+# Combined Build and Deploy Pipeline for Example MVC App for GitHub Actions
 # This pipeline builds and deploys Example MVC App with version tagging
 
 name: Example MVC App - Build and Deploy Pipeline
@@ -64,17 +64,10 @@ jobs:
               run: dotnet build ./src/Starter.AspNet.MVC/Starter.AspNet.MVC.csproj --configuration Release /p:Version=${{ env.BUILD_VERSION }}
 
             - name: Publish Starter.AspNet.MVC
-              run: dotnet publish ./src/Starter.AspNet.MVC/Starter.AspNet.MVC.csproj -c Release -o ../publish_output/home --no-build /p:Version=${{ env.BUILD_VERSION }}
+              run: dotnet publish ./src/Starter.AspNet.MVC/Starter.AspNet.MVC.csproj -c Release -o ../publish_output/web --no-build /p:Version=${{ env.BUILD_VERSION }}
 
-            - name: Zip App.Home output
-              run: Compress-Archive -Path ../publish_output/home/* -DestinationPath ../publish_output/Starter.AspNet.MVC.zip
-
-            # - name: Upload App.Home artifact
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #       name: Starter.AspNet.MVC
-            #       path: ../publish_output
-            #       retention-days: 3
+            - name: Zip App.Web output
+              run: Compress-Archive -Path ../publish_output/web/* -DestinationPath ../publish_output/Starter.AspNet.MVC.zip
 
     ####################### Tag Main Branch ##################################
 
@@ -101,19 +94,15 @@ jobs:
                 gh release create $version --title "$title" --notes "$notes" --latest
 
 
-    ####################### Deployment HomeSite ##################################
+    ####################### Deployment WebSite ##################################
 
-    # deploy-home:
+    # deploy-web:
     #     runs-on: windows-latest
     #     needs: tag-main
     #     permissions:
     #         id-token: write
     #         contents: read
     #     steps:
-    #         # - name: Download App.Home artifact
-    #         #   uses: actions/download-artifact@v4
-    #         #   with:
-    #         #       name: Starter.AspNet.MVC
     #         - name: Login to Azure
     #           uses: azure/login@v2
     #           with:
@@ -121,9 +110,9 @@ jobs:
     #               tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1AC65EAE653A45C8B4B099C9F41DC75B }}
     #               subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C7232968F99241F9879ACF509F5C889B }}
     #         - name: Deploy to Azure Web App
-    #           id: deploy-to-webapp-home
+    #           id: deploy-to-webapp-web
     #           uses: azure/webapps-deploy@v3
     #           with:
-    #               app-name: "aicoaches-home"
+    #               app-name: "example-mvc-project"
     #               slot-name: "Production"
     #               package: ../publish_output/Starter.AspNet.MVC.zip

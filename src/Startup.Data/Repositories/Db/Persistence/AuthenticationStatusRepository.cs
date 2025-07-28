@@ -12,12 +12,12 @@ public class AuthenticationStatusRepository : StartupExampleRepositoryBase, IAut
     {
     }
 
-    public AuthenticationStatus GetEntityById(short key)
+    public AuthenticationStatus? GetEntityById(short key)
     {
         return _context.AuthenticationStatuses.SingleOrDefault(x => x.Id == key);
     }
 
-    public async Task<AuthenticationStatus> GetEntityByIdAsync(short key)
+    public async Task<AuthenticationStatus?> GetEntityByIdAsync(short key)
     {
         return await _context.AuthenticationStatuses.SingleOrDefaultAsync(x => x.Id == key);
     }

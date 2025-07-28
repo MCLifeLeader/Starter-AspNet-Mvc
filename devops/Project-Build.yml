@@ -1,3 +1,9 @@
+# Starter AspNet MVC Project Build Pipeline
+# This pipeline builds the Starter.AspNet.MVC project.
+# It uses a variable group for configuration and publishes the output as an artifact.
+# The pipeline is triggered on changes to the main branch and runs nightly.
+# It also includes a schedule for nightly builds.
+# The pipeline is designed to work with Azure DevOps and uses the DotNetCoreCLI task for building and publishing.
 ####################### SCHEDULE ##################################
 schedules:
   - cron: "0 19 * * *"
@@ -17,8 +23,10 @@ name: $(ReleaseVersion).$(date:yyyy).$(date:MMdd)$(rev:.r)
 
 ####################### VARIABLES ##################################
 variables:
-  - group: Ai-Coaches
+    #Azure DevOps variable group
+  - group: ExampleProject
 
+    # Project specific variables
   - name: starterAspNetMvc
     value: '**/Starter.AspNet.MVC.csproj'
 
