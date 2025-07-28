@@ -17,7 +17,7 @@ name: $(ReleaseVersion).$(date:yyyy).$(date:MMdd)$(rev:.r)
 
 ####################### VARIABLES ##################################
 variables:
-  - group: Ai-Coaches
+  - group: ExampleProject
 
   - name: starterAspNetMvc
     value: '**/Starter.AspNet.MVC.csproj'
