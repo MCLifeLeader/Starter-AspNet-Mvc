@@ -26,6 +26,7 @@ variables:
     #Azure DevOps variable group
   - group: ExampleProject
 
+    # Project specific variables
   - name: starterAspNetMvc
     value: '**/Starter.AspNet.MVC.csproj'
 
